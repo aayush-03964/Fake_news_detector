@@ -2,15 +2,20 @@ import streamlit as st
 import pickle
 import re
 import nltk
-nltk.download('stopwords')
-nltk.download('punkt')
 from nltk.corpus import stopwords
 
-# Ensure stopwords are accessible
-nltk.download('stopwords', quiet=True)
-stop_words_lookup = set(stopwords.words('english'))
+# Streamlit User Interface Setup (Must be the very first Streamlit command)
+st.set_page_config(page_title="AI Fake News Detector", page_icon="📰", layout="centered")
 
-# 1. The Exact Same Cleaning Function from Step 2
+# Initialize NLTK Stopwords safely so it only downloads once on startup
+@st.cache_resource
+def initialize_nltk():
+    nltk.download('stopwords', quiet=True)
+    return set(stopwords.words('english'))
+
+stop_words_lookup = initialize_nltk()
+
+# 1. The Exact Same Cleaning Function from your notebook
 def clean_article_text(raw_text):
     if not isinstance(raw_text, str):
         return ""
@@ -21,7 +26,7 @@ def clean_article_text(raw_text):
     meaningful_words = [word for word in word_tokens if word not in stop_words_lookup]
     return " ".join(meaningful_words)
 
-# 2. Load the Saved Pickle Artifacts
+# 2. Load the Saved Pickle Artifacts securely
 @st.cache_resource
 def load_assets():
     with open('model.pkl', 'rb') as f:
@@ -33,11 +38,9 @@ def load_assets():
 try:
     my_model, tfidf_encoder = load_assets()
 except FileNotFoundError:
-    st.error("Error: Serialization files ('model.pkl' or 'vectorizer.pkl') not found.")
+    st.error("🚨 Error: Serialization files ('model.pkl' or 'vectorizer.pkl') not found in this directory. Please upload them to GitHub.")
 
-# 3. Streamlit User Interface Setup
-st.set_page_config(page_title="AI Fake News Detector", page_icon="📰", layout="centered")
-
+# Title and Header Presentation
 st.title("📰 AI-Driven Fake News Detector")
 st.write("This application analyzes text patterns using a trained Logistic Regression model to assess the statistical probability of a news headline being authentic or unverified.")
 st.markdown("---")
