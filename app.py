@@ -63,7 +63,7 @@ if st.button("Verify Headline Accuracy", type="primary"):
         
         # Step D: Dynamic UI Presentation output
         st.markdown("### Verification Result:")
-        if prediction == 0:
+        if prediction == 1:
             st.success(f"**AUTHENTIC NEWS** (Confidence Score: {confidence_score:.2f}%)")
             st.info("Analysis Indicates: The structural formatting and vocabulary align with validated factual reporting standards.")
         else:
