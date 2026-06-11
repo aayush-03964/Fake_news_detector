@@ -2,6 +2,8 @@ import streamlit as st
 import pickle
 import re
 import nltk
+nltk.download('stopwords')
+nltk.download('punkt')
 from nltk.corpus import stopwords
 
 # Ensure stopwords are accessible
